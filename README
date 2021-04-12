@@ -1,0 +1,46 @@
+
+
+
+Units for the program is
+speed: c
+time: inverse plasma frequency times
+
+You need to have installed some library named with a h-file <cerf.h> that 
+implements the function cerfi computing the complex error function from a complex 
+double. The original library used can be found at 
+https://jugit.fz-juelich.de/mlz/libcerf and follow their instructions to use that
+ library. It also uses mpi for parallelization.
+
+To compile, use the makefile.
+
+The program takes obligatory command line arguments but no check is done if you
+actually supplied them. The command line arguments are
+k - a double specifiyng maximum value of k vector
+s - number of points in k space to examine, s < 1000 
+y - square root of 2 mean squared velocity in a single direction perpendicular to k
+z - square root of 2 mean squared velocity parallel to k
+R - maximum oscillation angular frequency for starting value to newton solver
+I - maximum growth rate for starting value to newton solver
+r - how many points in oscillation frequency and growth rate to examine
+
+this uses Unix standard command line arguments syntax (from <unistd.h>).
+
+
+The code solves
+Dxx = w^2 - k^2 - 1 - R^2/(2 I^2) Z'(zeta) = 0
+for w. Here zeta = w / (k I) and Z is the plasma dispersion function.
+It uses starting values rangeing from 0 to R and 0 to I, each discritized r times.
+The k values are from dk to k where dk = k / s. For each k, it creates a file.
+The file then consists of r times r complex doubles in binary format,
+increamenting the imaginary parts fastest. I.e. in row major order, the rows are 
+the imaginary parts of w. The files are named newton_convergence_XXX.dat and 
+if s > 999, it overides previous file. It also writes a file called k.dat with 
+the k-values used.
+
+
+The solver stops whenever |w| > 100, Dxx is non-finite by c function isfinite, it 
+reaches the maximum iterations of 10000 or a non-finite number is obtained in newton
+iteration. In those cases w = 0 is printed to the output. It also stops the newton
+iterator if |Dxx| < 1e-12 and prints the w that yielded that result to the output.
+To alter any of these settings, you need to go into the source code in the main
+loop.
