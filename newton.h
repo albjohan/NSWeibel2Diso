@@ -9,10 +9,7 @@
 /* Searches for roots to dielectric function
     2D iso dist with 2 vrms^2 = vperp^2, and warm in 
     dougnut axis with temp vpar = sqrt(2 k T / m)
-    Fourier electric field at reciprocal k
-    searches with res * res points
-    in box [0, wmaxr] x [0, i wmaxi]
-    starts at w and does one iteration
+    Function iterates one step of newton iteration
 */
 int newton( double complex* w,
             double vperp, double vpar, 
